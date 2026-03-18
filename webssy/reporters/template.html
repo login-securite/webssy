@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=Signika:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PT Sans", Helvetica, Arial, sans-serif;
+            background-color: #fff;
+            color: #515151;
+            font-size: 18px;
+            line-height: 1.5;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #202020;
+            color: #fff;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-family: "Signika", serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .group {
+            margin-bottom: 3rem;
+        }
+
+        .group-header {
+            font-family: "Signika", serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #313131;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background-color: #f0f0f0;
+            color: #666;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .screenshot-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+
+        .screenshot-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            object-position: top left;
+            display: block;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .screenshot-info {
+            padding: 1rem;
+        }
+
+        .screenshot-title {
+            font-weight: 600;
+            color: #313131;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .screenshot-url {
+            font-size: 0.85rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.75rem;
+        }
+
+        .screenshot-url a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .screenshot-url a:hover {
+            color: #a22;
+            text-decoration: underline;
+        }
+
+        .screenshot-url.with-redirect {
+            margin-bottom: 0.25rem;
+        }
+
+        .redirect-info {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .redirect-info a {
+            color: #999;
+            text-decoration: none;
+        }
+
+        .redirect-info a:hover {
+            color: #a22;
+            text-decoration: underline;
+        }
+
+        .redirect-arrow {
+            color: #a22;
+            margin: 0 0.25rem;
+        }
+
+        .cert-discovery {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .cert-icon {
+            color: #388e3c;
+        }
+
+        .screenshot-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .protocol-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
+        .protocol-http {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .protocol-https {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status {
+            color: #666;
+        }
+
+        .failed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .failed-item {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-left: 3px solid #f44336;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .failed-target {
+            font-weight: 500;
+            color: #313131;
+        }
+
+        .failed-error {
+            color: #d32f2f;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: #fff;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: "Signika", serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #313131;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0.5rem;
+        }
+
+        .modal-close:hover {
+            color: #313131;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-details {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .modal-details strong {
+            color: #313131;
+        }
+
+        .modal-details a {
+            color: #a22;
+            text-decoration: none;
+        }
+
+        .modal-details a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #fff;
+            border-top: 1px solid #e5e5e5;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>{{ title }}</h1>
+            <div class="meta">Generated on {{ scan_date }}</div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        {% set modal_counter = namespace(value=0) %}
+        {% for group_name, group_results in grouped_results.items() %}
+        <div class="group">
+            <div class="group-header">
+                <span>{{ group_name }}</span>
+                <span class="badge">{{ group_results|length }}</span>
+            </div>
+
+            {% set has_screenshots = group_results | selectattr('screenshot_path') | list | length > 0 %}
+
+            {% if has_screenshots %}
+            <div class="screenshots-grid">
+                {% for result in group_results %}
+                {% if result.screenshot_path %}
+                <div class="screenshot-card" onclick="openModal({{ modal_counter.value }})">
+                    <img src="screenshots/{{ result.screenshot_path.name }}" alt="{{ result.final_url }}" loading="lazy">
+                    <div class="screenshot-info">
+                        <div class="screenshot-title" title="{{ result.page_title or 'No title' }}">
+                            {{ result.page_title or 'No title' }}
+                        </div>
+                        {% if result.target.discovered_from %}
+                        <div class="cert-discovery">
+                            <span class="cert-icon">🔒</span>
+                            <span>From {{ result.target.discovered_from }} certificate</span>
+                        </div>
+                        {% endif %}
+                        {% if result.target.get_url() != result.final_url %}
+                        <div class="screenshot-url with-redirect" title="{{ result.target.get_url() }}">
+                            <a href="{{ result.target.get_url() }}" target="_blank" onclick="event.stopPropagation()">{{ result.target.get_url() }}</a>
+                        </div>
+                        <div class="redirect-info" title="{{ result.final_url }}">
+                            <span class="redirect-arrow">↳</span><a href="{{ result.final_url }}" target="_blank" onclick="event.stopPropagation()">{{ result.final_url }}</a>
+                        </div>
+                        {% else %}
+                        <div class="screenshot-url" title="{{ result.final_url }}">
+                            <a href="{{ result.final_url }}" target="_blank" onclick="event.stopPropagation()">{{ result.final_url }}</a>
+                        </div>
+                        {% endif %}
+                        <div class="screenshot-meta">
+                            <span class="protocol-badge protocol-{{ result.protocol_used.value if result.protocol_used else 'http' }}">
+                                {{ result.protocol_used.value.upper() if result.protocol_used else 'N/A' }}
+                            </span>
+                            <span class="status">{{ result.status_code or 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal" id="modal{{ modal_counter.value }}" onclick="closeModal({{ modal_counter.value }})">
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <div class="modal-header">
+                            <div class="modal-title">{{ result.page_title or 'No title' }}</div>
+                            <button class="modal-close" onclick="closeModal({{ modal_counter.value }})">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="screenshots/{{ result.screenshot_path.name }}" alt="{{ result.final_url }}" class="modal-img">
+                            <div class="modal-details">
+                                {% if result.target.discovered_from %}
+                                <p><strong>Discovered from certificate:</strong> {{ result.target.discovered_from }}</p>
+                                {% endif %}
+                                {% if result.target.get_url() != result.final_url %}
+                                <p><strong>Original URL:</strong> <a href="{{ result.target.get_url() }}" target="_blank">{{ result.target.get_url() }}</a></p>
+                                <p><strong>Redirected to:</strong> <a href="{{ result.final_url }}" target="_blank">{{ result.final_url }}</a></p>
+                                {% else %}
+                                <p><strong>URL:</strong> <a href="{{ result.final_url }}" target="_blank">{{ result.final_url }}</a></p>
+                                {% endif %}
+                                <p><strong>Status:</strong> {{ result.status_code }}</p>
+                                <p><strong>Protocol:</strong> {{ result.protocol_used.value.upper() if result.protocol_used else 'N/A' }}</p>
+                                <p><strong>Duration:</strong> {{ result.duration_ms }}ms</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% set modal_counter.value = modal_counter.value + 1 %}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="failed-list">
+                {% for result in group_results %}
+                <div class="failed-item">
+                    <span class="failed-target">{{ result.target }}</span>
+                    <span class="failed-error">{{ result.error or 'No screenshot' }}</span>
+                    <span class="status">{{ result.status_code or 'N/A' }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <div class="container">
+            Generated by <strong>Webssy</strong> — Web Screenshot Tool for Pentesting
+        </div>
+    </footer>
+
+    <script>
+        function openModal(id) {
+            document.getElementById('modal' + id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById('modal' + id).classList.remove('active');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
